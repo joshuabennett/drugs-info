@@ -3,8 +3,8 @@
       <p class="subtitle">
         Drug Information
       </p>
-      <app-searchbar @searchDrug='getDrugInfo'></app-searchbar>
-      <app-drug-info v-if='isActive'></app-drug-info>
+      <app-searchbar @searchDrug="getDrugInfo"></app-searchbar>
+      <app-drug-info v-if='isActive' :drug='drug' :drugName='drugName'></app-drug-info>
   </div>
 </template>
 
@@ -16,7 +16,8 @@ export default {
   data: function() {
     return {
       drug:  {},
-      isActive: false
+      isActive: false,
+      drugName: ''
     }
   },
   components: {
@@ -24,7 +25,13 @@ export default {
     'app-searchbar': Searchbar
   },
   methods: {
-    getDrugInfo() {
+    getDrugInfo(e) {
+      this.drugName = e;
+      fetch(`https://api.fda.gov/drug/label.json?search=openfda.generic_name:"${e}"&limit=1`).then(function(response) {
+        return response.json();
+      }).then(function(result) {
+        this.drug = result;
+      });
       // Fetch the drug's info using openFDA API, send it to the Drug Info component, and reveal the component.
       this.isActive = true;
     }
