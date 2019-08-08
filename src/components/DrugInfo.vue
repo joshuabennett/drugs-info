@@ -8,10 +8,10 @@
                 <span class="tag is-dark">Classification</span>
             </div>
         </div>
-        <div class="notification is-primary has-text-grey"> {{ getClassification() }}</div>
-        <div class="field" v-if='drug2.controlled_substance'>
+        <div class="notification is-primary has-text-grey"> {{ getClassification() }} {{ getUsage() }}</div>
+        <div class="field" v-if='checkControlled'>
             
-            <div class="notification is-danger has-text-light"> {{ drug2.controlled_substance[0]}}</div>
+            <div class="notification is-danger has-text-light"> {{ getSchedule() }}</div>
         </div>
     </div>
 </template>
@@ -20,7 +20,9 @@
 export default {
     data: function() {
         return {
-            otherType: 'Brand'
+            otherType: 'Brand',
+            isControlled: true,
+            schedule: ''
         }
     },
     props: ['drug2', 'drugName', 'allDrugs', 'type'],
@@ -48,24 +50,48 @@ export default {
             return string;
         },
         getUsage() {
-            var str = this.drug2.indications_and_usage[0];
-            return str.slice(24, str.indexOf('.')+1);
+            var str = '';
+            var count = 0;
+            while (str == '') {
+                if (this.allDrugs[count].spl_medguide) {
+                    str = this.allDrugs[count].spl_medguide[0];
+                }
+                count++;
+                if (count >= this.allDrugs.length) {
+                    break;
+                }
+            }
+            var startIndex = str.toLowerCase().indexOf('what is ' + this.drugName.toLowerCase() + '?');
+            var endIndex = str.toLowerCase().indexOf('.', startIndex) + 1;
+            return str.slice(startIndex, endIndex);
+        },
+        getSchedule() {
+            var count = 0;
+            while (this.schedule == '') {
+                if (this.allDrugs[count].controlled_substance) {
+                    this.schedule = this.allDrugs[count].controlled_substance[0];
+                }
+                count++; 
+                if (count >= this.allDrugs.length) {
+                    break;
+                }
+            }
+            return this.schedule;
         },
         getClassification() {
             var str = '';
             var count = 0;
-            console.log(this.allDrugs[0].mechanism_of_action);
             while (str == '') {
+                //console.log(this.allDrugs[count].spl_medguide[0]);
                 if (this.allDrugs[count].mechanism_of_action) {
-                    console.log('enter');
-                    str = this.allDrugs[count].mechanism_of_action[0]
-                    console.log(str);
+                    str = this.allDrugs[count].mechanism_of_action[0];
                 }
                 count++;
+                if (count >= this.allDrugs.length) {
+                    break;
+                }
             }
             var generic = this.drug2.openfda.generic_name[0].toLowerCase().split(' ');
-            console.log(generic[0]);
-            console.log(str);
             var tempName = this.drugName.toLowerCase();
             var startIndex = str.toLowerCase().indexOf(tempName);
             if (startIndex == -1 ) {
@@ -73,6 +99,17 @@ export default {
             }
             var endIndex = str.indexOf('.', startIndex);
             return str.slice(startIndex, endIndex + 1);
+        }
+    },
+    computed: {
+        checkControlled() {
+            var truth = false;
+           this.allDrugs.forEach( drug => {
+               if (drug.controlled_substance) {
+                   truth = true;
+               }
+           });
+        return truth;
         }
     }
 

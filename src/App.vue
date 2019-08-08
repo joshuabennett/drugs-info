@@ -52,6 +52,7 @@ export default {
 </script>
 
 <style lang="scss">
+
 html {
   background: #477998;
  // background: -webkit-linear-gradient(to right, #0b8793, #360033);  /* Chrome 10-25, Safari 5.1-6 */
@@ -60,5 +61,14 @@ html {
 }
 .search {
   padding: 100px 100px 55px 100px;
+}
+
+@media all and (max-width: 600px) {
+  .search {
+    padding: 50px 0px 55px 0px;
+  }
+  .container {
+    padding: 25px;
+  }
 }
 </style>
