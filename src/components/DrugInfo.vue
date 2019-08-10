@@ -20,13 +20,13 @@
 export default {
     data: function() {
         return {
-            otherType: 'Brand',
             isControlled: true,
             schedule: ''
         }
     },
     props: ['drug2', 'drugName', 'allDrugs', 'type'],
     methods: {
+        // Loops through all drugs and adds their Brand name to the list unless it's already in the list. Returns string of all unique brand names.
         getDrugBrandNames() {
             var string = '';
             this.allDrugs.forEach( drug => {
@@ -38,6 +38,7 @@ export default {
             });
             return string;
         },
+        // Returns string of all unique generic names from list of all drugs.
         getDrugGenericNames() {
             var string = '';
             this.allDrugs.forEach( drug => {
@@ -49,6 +50,7 @@ export default {
             });
             return string;
         },
+        // Returns the first drug to contain SPL medguide, slicing out the first sentence after "What is DRUG?"
         getUsage() {
             var str = '';
             var count = 0;
@@ -65,6 +67,7 @@ export default {
             var endIndex = str.toLowerCase().indexOf('.', startIndex) + 1;
             return str.slice(startIndex, endIndex);
         },
+        // Returns the string for controlled substance information if there is any in any of the drugs.
         getSchedule() {
             var count = 0;
             while (this.schedule == '') {
@@ -78,11 +81,11 @@ export default {
             }
             return this.schedule;
         },
+        // Returns mechanism of action information for the first drug that has such information. Only returns first sentence after naming the drug.
         getClassification() {
             var str = '';
             var count = 0;
             while (str == '') {
-                //console.log(this.allDrugs[count].spl_medguide[0]);
                 if (this.allDrugs[count].mechanism_of_action) {
                     str = this.allDrugs[count].mechanism_of_action[0];
                 }
@@ -102,6 +105,7 @@ export default {
         }
     },
     computed: {
+        // Return boolean to see if drug has controlled substance information or not.
         checkControlled() {
             var truth = false;
            this.allDrugs.forEach( drug => {

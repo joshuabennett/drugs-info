@@ -25,6 +25,7 @@ export default {
     'app-searchbar': Searchbar
   },
   methods: {
+    // Returns first 50 entries of drug information for a given Drug Name based on generic name using OpenFDA API, if no generic then checks brand names.
     getDrugInfo(e) {
       var inside;
       this.drugName = e;
@@ -46,6 +47,7 @@ export default {
     }
   },
   mounted() {
+    // Default drug is Amoxicillin.
     this.getDrugInfo('Amoxicillin');
   }
 }
